@@ -1,4 +1,5 @@
 {
   "turboscript.config.rendering": "渲染配置",
-  "turboscript.config.rendering.api": "渲染 API"
+  "turboscript.config.rendering.api": "渲染 API",
+  "turboscript.key.ui": "TurboScript 配置界面"
 }

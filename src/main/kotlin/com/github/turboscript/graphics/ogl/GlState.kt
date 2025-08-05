@@ -10,12 +10,16 @@ object OpenGlState {
     private val blend0 = GlState(false) {
         if (it) {
             GlStateManager._enableBlend()
-            GlStateManager._blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         } else {
             GlStateManager._disableBlend()
         }
     }
     var blend by blend0
+
+    private val blendFunc0 = GlState(GL_ONE_MINUS_SRC_ALPHA) {
+        GlStateManager._blendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    }
+    var blendFunc by blendFunc0
 
     private val depth0 = GlState(false) {
         if (it) GlStateManager._enableDepthTest()
@@ -44,6 +48,10 @@ object OpenGlState {
     fun bindTexture(unit: Int, texture: Int) {
         GlStateManager._activeTexture(GL_TEXTURE0 + unit)
         GlStateManager._bindTexture(texture)
+    }
+
+    fun bindBuffer(target: Int, buffer: Int) {
+        GlStateManager._glBindBuffer(target, buffer)
     }
 
     private val vertexArray0 = GlState(0) { glBindVertexArray(it) }

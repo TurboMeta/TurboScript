@@ -1,5 +1,7 @@
 @file:Suppress("PropertyName")
 
+import org.slf4j.event.Level
+
 plugins {
     id("java-library")
     id("maven-publish")
@@ -30,15 +32,17 @@ val parchment_minecraft_version: String by project
 version = mod_version
 group = mod_group_id
 
+val library: Configuration by configurations.creating {
+    configurations.implementation.get().extendsFrom(this)
+}
+
 repositories {
     // Add here additional repositories if required
     mavenCentral()
     mavenLocal()
 
-    maven {
-        name = "Kotlin for Forge"
-        url = uri("https://thedarkcolour.github.io/KotlinForForge/")
-    }
+    maven("https://thedarkcolour.github.io/KotlinForForge/")
+    maven("https://maven.luna5ama.dev/")
 }
 
 base {
@@ -80,7 +84,7 @@ neoForge {
 
         configureEach {
             systemProperty("forge.logging.markers", "REGISTRIES")
-            logLevel = org.slf4j.event.Level.DEBUG
+            logLevel = Level.DEBUG
         }
 
     }
@@ -104,8 +108,14 @@ configurations {
 }
 
 dependencies {
-    // Add dependencies here
     implementation("thedarkcolour:kotlinforforge-neoforge:5.9.0")
+
+    library("dev.luna5ama:kmogus-core:1.1-SNAPSHOT") {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+    }
+    library("dev.luna5ama:kmogus-struct-api:1.1-SNAPSHOT") {
+        exclude("org.jetbrains.kotlin", "kotlin-stdlib")
+    }
 }
 
 val generateModMetadata by tasks.registering(ProcessResources::class) {
@@ -129,6 +139,7 @@ val generateModMetadata by tasks.registering(ProcessResources::class) {
 }
 
 sourceSets["main"].resources.srcDir(generateModMetadata)
+sourceSets["main"].compileClasspath += library
 
 neoForge.ideSyncTask(generateModMetadata)
 
@@ -145,6 +156,14 @@ publishing {
     }
 }
 
+tasks.jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from(library.map { if (it.isDirectory) it else zipTree(it) })
+
+    exclude("META-INF/*.RSA", "META-INF/*.DSA", "META-INF/*.SF")
+}
+
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
 }
@@ -155,3 +174,4 @@ idea {
         isDownloadJavadoc = true
     }
 }
+

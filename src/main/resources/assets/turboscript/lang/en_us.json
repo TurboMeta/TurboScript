@@ -1,4 +1,5 @@
 {
   "turboscript.config.rendering": "Rendering Configuration",
-  "turboscript.config.rendering.api": "Rendering API"
+  "turboscript.config.rendering.api": "Rendering API",
+  "turboscript.key.ui": "TurboScript Config GUI"
 }
