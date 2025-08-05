@@ -14,7 +14,7 @@ open class GlBuffer(
     mapBits: Int = GL_READ_WRITE,
 ): TRIBuffer {
 
-    val id: Int = glCreateBuffers()
+    val glId: Int = glCreateBuffers()
 
     private var lastTarget: Int? = null
     protected val arr: MutableArr
@@ -24,15 +24,15 @@ open class GlBuffer(
     }
 
     init {
-        glNamedBufferStorage(id, size, GL_MAP_READ_BIT or extraBits)
+        glNamedBufferStorage(glId, size, GL_MAP_READ_BIT or extraBits)
         arr = Arr.wrap(glMapNamedBufferRange(
-            id, 0L, size, mapBits
+            glId, 0L, size, mapBits
         ) as ByteBuffer).asMutable()
     }
 
     fun bind(target: Int) {
         lastTarget = target
-        OpenGlState.bindBuffer(target, id)
+        OpenGlState.bindBuffer(target, glId)
     }
 
     fun unbind() {
